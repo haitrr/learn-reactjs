@@ -84,7 +84,8 @@ function Square(props) {
 
     render() {
       const history = this.state.history;
-      const current = history[this.state.stepNumber];
+      const stepnumber = this.state.stepNumber;
+      const current = history[stepnumber];
       const winner = calculateWinner(current.squares);
 
       const moves = history.map((step, move) => {
@@ -93,7 +94,7 @@ function Square(props) {
           'Go to game start';
         return (
           <li key={move}>
-            <button onClick={() => this.jumpTo(move)}>{desc}</button>
+            <button onClick={() => this.jumpTo(move)}>{(stepnumber === move)?(<strong> {desc} </strong>):desc}</button>
           </li>
         );
       });
