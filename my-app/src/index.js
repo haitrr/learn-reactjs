@@ -40,9 +40,11 @@ function Square(props) {
       this.state = {
         history: [{
           squares: Array(9).fill(null),
+          move: null
         }],
         stepNumber: 0,
         xIsNext: true,
+        sortHistoryIncreasing : false
       };
     }
 
@@ -70,24 +72,38 @@ function Square(props) {
     }
 
     jumpTo(step) {
-      this.setState({
-        stepNumber: step,
-        xIsNext: (step % 2) === 0,
-      });
+      if(!this.state.sortHistoryIncreasing){
+        step = this.state.history.length - step-1;
+    }
+    this.setState({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
+    });
+
     }
 
+  handleSortChange(){
+    this.setState({sortHistoryIncreasing: !this.state.sortHistoryIncreasing})
+  }
+
     render() {
-      const history = this.state.history;
-      const stepnumber = this.state.stepNumber;
-      const current = history[stepnumber];
+      const history = this.state.history.slice();
+      const stepnumber = this.state.sortHistoryIncreasing ? this.state.stepNumber  : this.state.history.length -1 - this.state.stepNumber 
+
+
+      const current = history[this.state.stepNumber];
       const winner = calculateWinner(current.squares);
 
+      if(!this.state.sortHistoryIncreasing){
+        history.reverse();
+      }
+
       const moves = history.map((step, move) => {
-        const desc = move ?
+        const desc = step.move ?
           'Go to move #' + move + " <"+ calculateRowCol(step.move) +">":
-          'Go to game start';
+          ('Go to game ' + (calculateWinner(step.squares) ? "end" : "start"));
         return (
-          <li key={move}>
+          <li key={step.move}>
             <button onClick={() => this.jumpTo(move)}>{(stepnumber === move)?(<strong> {desc} </strong>):desc}</button>
           </li>
         );
@@ -109,6 +125,12 @@ function Square(props) {
           </div>
           <div className="game-info">
             <div>{status}</div>
+            <p>History</p>
+            <p>Sort increasing</p>
+            <label className="switch">
+            <input type="checkbox" onChange = {() => this.handleSortChange()}/>
+            <span className="slider round"></span>
+          </label>
             <ol>{moves}</ol>
           </div>
         </div>
