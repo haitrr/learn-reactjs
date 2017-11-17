@@ -56,6 +56,11 @@ function Square(props) {
     handleClick(i) {
       const history = this.state.history;
       const current = history[history.length - 1];
+      const step = this.state.stepNumber;
+      if(step !== history.length-1){
+        alert("Please return to the latest step");
+        return;
+      }
       const squares = current.squares.slice();
       if (calculateWinner(squares) || squares[i]) {
         return;
